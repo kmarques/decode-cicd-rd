@@ -14,4 +14,19 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - name: "Say Hello world"
-              run: echo "HelloWorld"
+              run: echo "Hello World"
+
+    unit-test:
+        runs-on: ubuntu-latest
+        steps:
+            - run: echo "Run Unit tests"
+
+    functional-test:
+        runs-on: ubuntu-latest
+        steps:
+            - run: echo "Run Functional tests"
+
+    build:
+        runs-on: ubuntu-latest
+        steps:
+            - run: echo "Build projects"
