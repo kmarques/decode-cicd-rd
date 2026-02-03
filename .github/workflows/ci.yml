@@ -37,7 +37,8 @@ jobs:
         name: "Lint tests"
         runs-on: ubuntu-latest
         steps:
-            - run: env
+            - uses: actions/checkout@v6
+            - run: ls
 
     unit-test:
         needs: ["lint"]
