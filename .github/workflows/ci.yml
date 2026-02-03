@@ -4,8 +4,8 @@ on:
     push:
         paths:
             - src
-        paths-ignore:
-            - src/docs
+        #paths-ignore:
+        #    - src/docs
 
 jobs:
     hello:
