@@ -38,7 +38,9 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@v6
-            - run: ls
+            - uses: actions/setup-node@v6
+            - run: npm install -D
+            - run: npm run lint
 
     unit-test:
         needs: ["lint"]
