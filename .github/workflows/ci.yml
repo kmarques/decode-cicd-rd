@@ -14,9 +14,11 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - name: "Say Hello world"
-              run: |
-                  echo "Hello World"
-                  exit 1
+              run: echo "Hello World"
+            - name: "Exit with errors"
+              run: exit 1
+            - name: "Say something"
+              run: "echo 'Something'"
 
     unit-test:
         needs: ["hello"]
