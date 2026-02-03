@@ -12,6 +12,7 @@ on:
 jobs:
     hello:
         runs-on: ubuntu-latest
+        continue-on-error: true
         steps:
             - name: "Say Hello world"
               run: echo "Hello World"
@@ -20,6 +21,10 @@ jobs:
               run: exit 1
             - name: "Say something"
               run: "echo 'Something'"
+            - name: "Exit with errors again"
+              run: exit 2
+            - name: "Say something other"
+              run: "echo 'Something other'"
 
     unit-test:
         needs: ["hello"]
