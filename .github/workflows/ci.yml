@@ -4,6 +4,7 @@ on:
     push:
         paths:
             - src/**
+            - "!src/docs/**"
             - .github/workflows/ci.yml
         #paths-ignore:
         #    - src/docs
