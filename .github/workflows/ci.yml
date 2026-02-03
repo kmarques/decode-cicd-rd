@@ -17,16 +17,19 @@ jobs:
               run: echo "Hello World"
 
     unit-test:
+        needs: ["hello"]
         runs-on: ubuntu-latest
         steps:
             - run: echo "Run Unit tests"
 
     functional-test:
+        needs: ["hello"]
         runs-on: ubuntu-latest
         steps:
             - run: echo "Run Functional tests"
 
     build:
+        needs: ["unit-test", "functional-test"]
         runs-on: ubuntu-latest
         steps:
             - run: echo "Build projects"
