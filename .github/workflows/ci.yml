@@ -54,6 +54,17 @@ jobs:
         steps:
             - run: echo "Run Functional tests"
 
+    health-test:
+        needs: ["lint"]
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v6
+            - uses: actions/setup-node@v6
+            - run: npm install
+            - run: |
+                  npm start &
+                  curl -v http://localhost:3000/health
+
     build:
         needs: ["unit-test", "functional-test"]
         runs-on: ubuntu-latest
