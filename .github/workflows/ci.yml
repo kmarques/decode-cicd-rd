@@ -16,6 +16,7 @@ jobs:
             - name: "Say Hello world"
               run: echo "Hello World"
             - name: "Exit with errors"
+              continue-on-error: true
               run: exit 1
             - name: "Say something"
               run: "echo 'Something'"
