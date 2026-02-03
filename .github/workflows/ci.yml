@@ -3,7 +3,7 @@ name: "CI NODE"
 on:
     push:
         paths:
-            - src
+            - src/**
             - .github/workflows/ci.yml
         #paths-ignore:
         #    - src/docs
