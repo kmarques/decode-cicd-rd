@@ -1,4 +1,5 @@
 const express = require("express");
+const process = require("process");
 
 const app = express();
 
@@ -10,6 +11,6 @@ app.get("/health", (req, res) => {
   res.sendStatus(200);
 });
 
-app.listen(3000, () => {
-  console.log("Server is running on port 3000");
+app.listen(process.env.PORT || 3000, () => {
+  console.log(`Server is running on port ${process.env.PORT || 3000}`);
 });

@@ -63,7 +63,9 @@ jobs:
             - run: npm install
             - run: |
                   npm start &
-                  curl -v http://localhost:3000/health
+                  curl -v http://localhost:3500/health
+              env:
+                  PORT: 3500
 
     build:
         needs: ["unit-test", "functional-test"]
