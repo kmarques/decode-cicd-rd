@@ -63,11 +63,16 @@ jobs:
       - uses: actions/setup-node@v6
       - run: npm install
       - run: |
+          echo PORT=${{vars.PORT}}
+          echo JWT_SECRET=${{secrets.JWT_SECRET}}
+          echo "JWT_SECRET=${{secrets.JWT_SECRET}}" > .env
+          cat .env
           npm start &
           sleep 5s
-          curl -v http://localhost:3500/health
+          curl -v http://localhost:${{vars.PORT}}/health
         env:
-          PORT: 3500
+          JWT_SECRET: "${{ secrets.JWT_SECRET }}"
+          PORT: "${{ vars.PORT }}"
 
   build:
     needs: ["unit-test", "functional-test"]
