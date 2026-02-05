@@ -34,34 +34,78 @@ jobs:
       - name: "Say something other"
         run: "echo 'Something other'"
 
+  deps:
+    name: "Install Dev depedencies"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+      - uses: actions/cache@v5
+        id: cache
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}-dev
+      - run: npm install -D
+        if: steps.cache.outputs.cache-hit != 'true'
+
   lint:
+    needs: ["deps"]
     name: "Lint tests"
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
       - uses: actions/setup-node@v6
-      - run: npm install -D
+      - uses: actions/cache/restore@v5
+        with:
+          key: ${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}-dev
+          path: node_modules
       - run: npm run lint
 
-  unit-test:
-    needs: ["lint"]
-    runs-on: ubuntu-latest
-    steps:
-      - run: echo "Run Unit tests"
-
-  functional-test:
-    needs: ["lint"]
-    runs-on: ubuntu-latest
-    steps:
-      - run: echo "Run Functional tests"
-
-  health-test:
+  build-test:
+    name: Build for deployment
     needs: ["lint"]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
       - uses: actions/setup-node@v6
-      - run: npm install
+      - uses: actions/cache/restore@v5
+        with:
+          key: ${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}-dev
+          path: node_modules
+      - run: echo "Build projects"
+
+  unit-test:
+    needs: ["build-test"]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/cache/restore@v5
+        with:
+          key: ${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}-dev
+          path: node_modules
+      - run: echo "Run Unit tests"
+      - run: ls node_modules | wc -l
+
+  functional-test:
+    needs: ["build-test"]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/cache/restore@v5
+        with:
+          key: ${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}-dev
+          path: node_modules
+      - run: echo "Run Functional tests"
+      - run: ls node_modules | wc -l
+
+  health-test:
+    needs: ["build-test"]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+      - uses: actions/cache/restore@v5
+        with:
+          key: ${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}-dev
+          path: node_modules
       - name: Create env file
         run: |
           echo ${{vars.ENV_FILE}} > .env
@@ -77,18 +121,46 @@ jobs:
           JWT_SECRET: "${{ secrets.JWT_SECRET }}"
           PORT: "${{ vars.PORT }}"
 
-  build:
+  deps-prod:
+    name: Install deps for production
+    needs: ["unit-test", "functional-test", "health-test"]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+      - uses: actions/cache@v5
+        id: cache
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}-prod
+      - run: npm ci
+        if: steps.cache.outputs.cache-hit != 'true'
+  build-prod:
+    name: Build for deployment
     needs: ["unit-test", "functional-test"]
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+      - uses: actions/cache/restore@v5
+        with:
+          key: ${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}-prod
+          path: node_modules
       - run: echo "Build projects"
 
   deploy:
-    needs: ["build"]
+    needs: ["build-prod"]
     runs-on: ubuntu-latest
     environment:
       name: production
     steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+      - uses: actions/cache/restore@v5
+        with:
+          key: ${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}-prod
+          path: node_modules
+      - run: ls node_modules | wc -l
       - name: Debug variables
         run: |
           echo PORT=${{vars.PORT}}
