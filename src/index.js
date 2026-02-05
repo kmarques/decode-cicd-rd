@@ -7,8 +7,6 @@ if (!process.env.JWT_SECRET) {
   process.exit(1);
 }
 
-let foo;
-
 const app = express();
 
 app.get("/", (req, res) => {
@@ -17,6 +15,23 @@ app.get("/", (req, res) => {
 
 app.get("/health", (req, res) => {
   res.sendStatus(200);
+});
+
+app.get("/db", async (req, res) => {
+  const { Client } = require("pg");
+  const client = new Client({
+    connectionString: process.env.DATABASE_URL,
+  });
+  try {
+    await client.connect();
+    const result = await client.query("SELECT NOW()");
+    res.json({ time: result.rows[0].now });
+  } catch (err) {
+    console.error("Database connection error:", err);
+    res.status(500).json({ error: "Database connection error" });
+  } finally {
+    await client.end();
+  }
 });
 
 app.get("/auth/login", (req, res) => {
