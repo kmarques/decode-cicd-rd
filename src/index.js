@@ -7,6 +7,8 @@ if (!process.env.JWT_SECRET) {
   process.exit(1);
 }
 
+let foo;
+
 const app = express();
 
 app.get("/", (req, res) => {
