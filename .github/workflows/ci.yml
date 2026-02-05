@@ -82,3 +82,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - run: echo "Build projects"
+
+  deploy:
+    needs: ["build"]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Debug variables
+        run: |
+          echo PORT=${{vars.PORT}}
