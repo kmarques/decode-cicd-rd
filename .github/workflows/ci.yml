@@ -52,6 +52,9 @@ jobs:
     needs: ["deps"]
     name: "Lint tests"
     runs-on: ubuntu-latest
+    outputs:
+      valid: ${{ steps.lint-valid.outputs.valid }}
+
     steps:
       - uses: actions/checkout@v6
       - uses: actions/setup-node@v6
@@ -60,7 +63,15 @@ jobs:
           key: ${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}-dev
           path: node_modules
       - run: npm run lint
+      - id: lint-valid
+        run: |
+          if [[ -s eslint-report.txt ]]; then
+            echo "valid=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "valid=true" >> "$GITHUB_OUTPUT"
+          fi
       - name: "Upload eslint report"
+        if: steps.lint-valid.outputs.valid != 'true'
         uses: actions/upload-artifact@v4
         with:
           name: eslint-report
