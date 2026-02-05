@@ -60,6 +60,11 @@ jobs:
           key: ${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}-dev
           path: node_modules
       - run: npm run lint
+      - name: "Upload eslint report"
+        uses: actions/upload-artifact@v4
+        with:
+          name: eslint-report
+          path: eslint-report.txt
 
   build-test:
     name: Build for deployment
