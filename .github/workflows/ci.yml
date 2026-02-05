@@ -1,75 +1,76 @@
 name: "CI NODE"
 
 on:
-    push:
-        paths:
-            - src/**
-            - "!src/docs/**"
-            - .github/workflows/ci.yml
-        #paths-ignore:
-        #    - src/docs
+  push:
+    paths:
+      - src/**
+      - "!src/docs/**"
+      - .github/workflows/ci.yml
+    #paths-ignore:
+    #    - src/docs
+  workflow_dispatch:
 
 jobs:
-    hello:
-        if: false
-        runs-on: ubuntu-latest
+  hello:
+    if: false
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - name: "List current folder"
+        run: ls -la
+      - name: "Create file"
+        run: touch test-file
+      - name: "List current folder"
+        run: ls -la
+      - name: "Say Hello world"
+        run: echo "Hello World"
+      - name: "Exit with errors"
         continue-on-error: true
-        steps:
-            - name: "List current folder"
-              run: ls -la
-            - name: "Create file"
-              run: touch test-file
-            - name: "List current folder"
-              run: ls -la
-            - name: "Say Hello world"
-              run: echo "Hello World"
-            - name: "Exit with errors"
-              continue-on-error: true
-              run: exit 1
-            - name: "Say something"
-              run: "echo 'Something'"
-            - name: "Exit with errors again"
-              run: exit 2
-            - name: "Say something other"
-              run: "echo 'Something other'"
+        run: exit 1
+      - name: "Say something"
+        run: "echo 'Something'"
+      - name: "Exit with errors again"
+        run: exit 2
+      - name: "Say something other"
+        run: "echo 'Something other'"
 
-    lint:
-        name: "Lint tests"
-        runs-on: ubuntu-latest
-        steps:
-            - uses: actions/checkout@v6
-            - uses: actions/setup-node@v6
-            - run: npm install -D
-            - run: npm run lint
+  lint:
+    name: "Lint tests"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+      - run: npm install -D
+      - run: npm run lint
 
-    unit-test:
-        needs: ["lint"]
-        runs-on: ubuntu-latest
-        steps:
-            - run: echo "Run Unit tests"
+  unit-test:
+    needs: ["lint"]
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Run Unit tests"
 
-    functional-test:
-        needs: ["lint"]
-        runs-on: ubuntu-latest
-        steps:
-            - run: echo "Run Functional tests"
+  functional-test:
+    needs: ["lint"]
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Run Functional tests"
 
-    health-test:
-        needs: ["lint"]
-        runs-on: ubuntu-latest
-        steps:
-            - uses: actions/checkout@v6
-            - uses: actions/setup-node@v6
-            - run: npm install
-            - run: |
-                  npm start &
-                  sleep 5s
-                  curl -v http://localhost:3500/health
-              env:
-                  PORT: 3500
+  health-test:
+    needs: ["lint"]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+      - run: npm install
+      - run: |
+          npm start &
+          sleep 5s
+          curl -v http://localhost:3500/health
+        env:
+          PORT: 3500
 
-    build:
-        needs: ["unit-test", "functional-test"]
-        runs-on: ubuntu-latest
-        steps:
-            - run: echo "Build projects"
+  build:
+    needs: ["unit-test", "functional-test"]
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Build projects"
