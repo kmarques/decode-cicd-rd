@@ -21,3 +21,10 @@ Le workflow doit inclure les jobs suivants :
 - Tests e2e : Utiliser Cypress pour exécuter les tests e2e.
 
 - Notify : Afficher un message de succès ou d'échec à la fin du workflow.
+
+## TP3 : Ajouter la gestion des variables d'environnement et des secrets dans le workflow GitHub Actions
+
+Le TP consiste à ajouter la gestion des variables d'environnement et des secrets dans le workflow GitHub Actions pour un projet Symfony/PHP.   
+Vous devez configurer le workflow pour utiliser des secrets GitHub Actions pour stocker des informations sensibles telles que les clés d'API, les mots de passe, etc.   
+Vous devez également configurer le workflow pour utiliser des variables d'environnement pour stocker des informations non sensibles telles que les chemins d'accès, les versions de PHP, etc.   
+Vous pouvez par exemple générer le fichier .env à partir de secrets et de variables d'environnement dans le workflow.
